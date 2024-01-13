@@ -2,7 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.constants;
 
 /** Add your docs here. */
-public class Drivetrain {}
+public class ControllerConstants {
+    public static double DEADBAND = 0.1;
+}
