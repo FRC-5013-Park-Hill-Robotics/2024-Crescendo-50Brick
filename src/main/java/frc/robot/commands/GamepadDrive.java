@@ -50,10 +50,9 @@ public class GamepadDrive extends Command {
 
 		double throttle = modifyAxis(m_gamepad.getRightTriggerAxis());
 
-		if (m_gamepad.leftBumper().getAsBoolean()){
+		if (m_gamepad.getLeftTriggerAxis() > 0.5){
 			throttle = throttle/3;
 		}
-
 
 		double translationX = modifyAxis(-m_gamepad.getLeftY());
 		double translationY = modifyAxis(-m_gamepad.getLeftX());
@@ -64,10 +63,9 @@ public class GamepadDrive extends Command {
 			translationY = Math.sin(angle) * throttle;
 		}
 
-		double h = xLimiter.calculate(translationX);
-		double k = yLimiter.calculate(translationY);
-		m_drivetrain.applyRequest(()->drive.withVelocityX(h)
-			.withVelocityY(k) 
+		m_drivetrain.setControl(drive
+			.withVelocityX(-CommandSwerveDrivetrain.percentOutputToMetersPerSecond(xLimiter.calculate(translationX)))
+			.withVelocityY(CommandSwerveDrivetrain.percentOutputToMetersPerSecond(yLimiter.calculate(translationY))) 
 			.withRotationalRate(-m_gamepad.getRightX() * MaxAngularRate));
 		
 		/*(ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -75,7 +73,10 @@ public class GamepadDrive extends Command {
 				m_drivetrain.percentOutputToMetersPerSecond(yLimiter.calculate(translationY)), getRotationRadiansPerSecond(),
 				m_drivetrain.getYawR2d()));*/
 
-		//SmartDashboard.putNumber("Drive Rotation", getRotationRadiansPerSecond());
+		SmartDashboard.putNumber("Throttle", throttle);
+		SmartDashboard.putNumber("Drive Rotation", -m_gamepad.getRightX() * MaxAngularRate);
+		SmartDashboard.putNumber("VX", CommandSwerveDrivetrain.percentOutputToMetersPerSecond(xLimiter.calculate(translationX)));
+		SmartDashboard.putNumber("VY", CommandSwerveDrivetrain.percentOutputToMetersPerSecond(yLimiter.calculate(translationY)));
 		
 		/*
 		 * m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -89,18 +90,7 @@ public class GamepadDrive extends Command {
 		m_drivetrain.applyRequest(() -> brake);
 	}
 
-	/*private double getXTranslationMetersPerSecond() {
-		// on the controller y is up, on the field x is away from the driver
-		return -Drivetrain
-				.percentOutputToMetersPerSecond(xLimiter.calculate(modifyAxis(m_gamepad.getLeftY())));
-	}
-
-	private double getYTranslationMetersPerSecond() {
-		// on the controller y is up, on the field x is away from the driver
-		return -Drivetrain
-				.percentOutputToMetersPerSecond(yLimiter.calculate(modifyAxis(m_gamepad.getLeftX())));
-	}
-
+	/*
 	private double getRotationRadiansPerSecond() {
 		return -Drivetrain
 				.percentOutputToRadiansPerSecond(rotationLimiter.calculate(modifyAxis(m_gamepad.getRightX(),2))) / 3;
