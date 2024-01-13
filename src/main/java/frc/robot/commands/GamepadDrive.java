@@ -66,7 +66,8 @@ public class GamepadDrive extends Command {
 
 		double h = xLimiter.calculate(translationX);
 		double k = yLimiter.calculate(translationY);
-		m_drivetrain.applyRequest(()->drive.withVelocityX(h)
+		m_drivetrain.applyRequest(()->drive
+			.withVelocityX(h)
 			.withVelocityY(k) 
 			.withRotationalRate(-m_gamepad.getRightX() * MaxAngularRate));
 		
@@ -75,7 +76,7 @@ public class GamepadDrive extends Command {
 				m_drivetrain.percentOutputToMetersPerSecond(yLimiter.calculate(translationY)), getRotationRadiansPerSecond(),
 				m_drivetrain.getYawR2d()));*/
 
-		//SmartDashboard.putNumber("Drive Rotation", getRotationRadiansPerSecond());
+		SmartDashboard.putNumber("Drive Rotation", -m_gamepad.getRightX() * MaxAngularRate);
 		
 		/*
 		 * m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
