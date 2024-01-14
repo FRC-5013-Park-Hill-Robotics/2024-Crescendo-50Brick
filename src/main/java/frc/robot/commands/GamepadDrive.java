@@ -9,12 +9,11 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.ControllerConstants;
+import frc.robot.constants.DrivetrainConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class GamepadDrive extends Command {
@@ -24,11 +23,8 @@ public class GamepadDrive extends Command {
 	private SlewRateLimiter yLimiter = new SlewRateLimiter(3);
 	private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3);
 
-	private double MaxSpeed = 6; // 6 meters per second desired top speed
-	private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity  
-
 	private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+      .withDeadband(DrivetrainConstants.maxAngularVelocityRatiansPerSecond * 0.1).withRotationalDeadband(DrivetrainConstants.maxAngularVelocityRatiansPerSecond * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
   	private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -66,36 +62,20 @@ public class GamepadDrive extends Command {
 		m_drivetrain.setControl(drive
 			.withVelocityX(-CommandSwerveDrivetrain.percentOutputToMetersPerSecond(xLimiter.calculate(translationX)))
 			.withVelocityY(CommandSwerveDrivetrain.percentOutputToMetersPerSecond(yLimiter.calculate(translationY))) 
-			.withRotationalRate(-m_gamepad.getRightX() * MaxAngularRate));
+			.withRotationalRate(-CommandSwerveDrivetrain.percentOutputToRadiansPerSecond(m_gamepad.getRightX())));
 		
-		/*(ChassisSpeeds.fromFieldRelativeSpeeds(
-				-m_drivetrain.percentOutputToMetersPerSecond(xLimiter.calculate(translationX)),
-				m_drivetrain.percentOutputToMetersPerSecond(yLimiter.calculate(translationY)), getRotationRadiansPerSecond(),
-				m_drivetrain.getYawR2d()));*/
 
 		SmartDashboard.putNumber("Throttle", throttle);
-		SmartDashboard.putNumber("Drive Rotation", -m_gamepad.getRightX() * MaxAngularRate);
+		SmartDashboard.putNumber("Drive Rotation",-CommandSwerveDrivetrain.percentOutputToRadiansPerSecond(m_gamepad.getRightX()) );
 		SmartDashboard.putNumber("VX", CommandSwerveDrivetrain.percentOutputToMetersPerSecond(xLimiter.calculate(translationX)));
 		SmartDashboard.putNumber("VY", CommandSwerveDrivetrain.percentOutputToMetersPerSecond(yLimiter.calculate(translationY)));
 		
-		/*
-		 * m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
-		 * getXTranslationMetersPerSecond(),
-		 * getYTranslationMetersPerSecond(), getRotationRadiansPerSecond(),
-		 * m_drivetrain.getGyroscopeRotation()));
-		 */ }
+	 }
 
 	@Override
 	public void end(boolean interrupted) {
 		m_drivetrain.applyRequest(() -> brake);
 	}
-
-	/*
-	private double getRotationRadiansPerSecond() {
-		return -Drivetrain
-				.percentOutputToRadiansPerSecond(rotationLimiter.calculate(modifyAxis(m_gamepad.getRightX(),2))) / 3;
-
-	}*/
 
 	private static double modifyAxis(double value) {
 	
