@@ -25,7 +25,7 @@ public class AllignOnGamePiece extends CommandBase {
     m_LimeLight = limelight;
   }
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-    .withDeadband(DrivetrainConstants.maxSpeed * 0.1).withRotationalDeadband(DrivetrainConstants.maxAngularVelocity * 0.1)
+    .withDeadband(DrivetrainConstants.maxSpeedMetersPerSecond * 0.1).withRotationalDeadband(DrivetrainConstants.maxAngularVelocityRatiansPerSecond * 0.1)
     .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
