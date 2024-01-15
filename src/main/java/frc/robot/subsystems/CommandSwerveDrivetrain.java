@@ -57,11 +57,11 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     }
 
     public static double percentOutputToMetersPerSecond(double percentOutput) {
-		return DrivetrainConstants.maxSpeed  * percentOutput;
+		return DrivetrainConstants.maxSpeedMetersPerSecond  * percentOutput;
 	}
 
 	public static double percentOutputToRadiansPerSecond(double percentOutput) {
-		return DrivetrainConstants.maxAngularVelocity * percentOutput;
+		return DrivetrainConstants.maxAngularVelocityRatiansPerSecond * percentOutput;
 	}
 
     public void zeroGyroscope(){
