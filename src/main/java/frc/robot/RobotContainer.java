@@ -13,11 +13,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.GamepadDrive;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.LimeLight;
+import frc.robot.commands.AllignOnGamePiece;
+import frc.robot.commands.DriveToGamePiece;
 
 public class RobotContainer {
   public static RobotContainer instance;
@@ -28,8 +31,8 @@ public class RobotContainer {
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
 
-  private final LimeLight m_frontLimeLight = new LimeLight("FrontLL", true);
-  private final LimeLight m_backLimeLight = new LimeLight("BackLL", false);
+  //private final LimeLight m_frontLimeLight = new LimeLight("FrontLL", true);
+  private final LimeLight m_backLimeLight = new LimeLight("limelight-back", false);
 
   /* Drivetrain 'Requests' */
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -58,8 +61,8 @@ public class RobotContainer {
         .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
     // turn to target
-    joystick.x().whileTrue(drivetrain
-        .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+    joystick.x().whileTrue(new DriveToGamePiece(drivetrain, m_backLimeLight));
+    joystick.y().whileTrue(new AllignOnGamePiece(drivetrain, m_backLimeLight));
 
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
@@ -71,11 +74,11 @@ public class RobotContainer {
     }
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    //boolean i = m_frontLimeLight.hasTarget();
-    //boolean d = m_backLimeLight.hasTarget();
+    
   }
 
   public RobotContainer() {
+    instance = this;
     configureBindings();
   }
 
