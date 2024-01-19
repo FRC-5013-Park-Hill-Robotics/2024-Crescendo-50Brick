@@ -11,22 +11,20 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.constants.DrivetrainConstants;
 import frc.robot.constants.LimeLightConstants;
-import frc.robot.constants.ThetaGains;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.constants.ThetaGains;
 import frc.robot.subsystems.LimeLight;
 
-/** Add your docs here. */
-public class DriveToGamePiece extends CommandBase {
-
+public class AllignOnLLTarget extends CommandBase {
   private LimeLight m_LimeLight;
   private CommandSwerveDrivetrain m_Drivetrain;
   private PIDController thetaController = new PIDController(ThetaGains.kP, ThetaGains.kI, ThetaGains.kD);
-  public DriveToGamePiece(CommandSwerveDrivetrain drivetrain, LimeLight limelight) {
+  public AllignOnLLTarget(CommandSwerveDrivetrain drivetrain, LimeLight limelight) {
     addRequirements(drivetrain);
     m_Drivetrain = drivetrain;
     m_LimeLight = limelight;
   }
-  private final SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric()
+  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
     .withDeadband(DrivetrainConstants.maxSpeedMetersPerSecond * 0.1).withRotationalDeadband(DrivetrainConstants.maxAngularVelocityRatiansPerSecond * 0.1)
     .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -43,7 +41,7 @@ public class DriveToGamePiece extends CommandBase {
   @Override
   public void execute() {
     double thetaOutput = 0;
-    double xOutput = 0.2;
+    double xOutput = 0;
     double yOutput = 0;
 		if (m_LimeLight.hasTarget()){
 			double vertical_angle = m_LimeLight.getVerticalAngleOfErrorDegrees();
@@ -59,8 +57,7 @@ public class DriveToGamePiece extends CommandBase {
 		} else {
 			System.out.println("NO TARGET");
 		}
-    
-    m_Drivetrain.setControl(drive.withVelocityX(-CommandSwerveDrivetrain.percentOutputToMetersPerSecond(xOutput)).withVelocityY(yOutput).withRotationalRate(thetaOutput));
+    m_Drivetrain.setControl(drive.withVelocityX(xOutput).withVelocityY(yOutput).withRotationalRate(thetaOutput));
   }
 
   // Called once the command ends or is interrupted.

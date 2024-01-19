@@ -76,10 +76,9 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
     public Pose2d getPose(){
         return new Pose2d();
-        //return get;
     }
     
     public void zeroGyroscope(){
-        m_pigeon2.setYaw(0);
+        m_pigeon2.setYaw(90);
     }    
 }

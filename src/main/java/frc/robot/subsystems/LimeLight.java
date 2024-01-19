@@ -48,7 +48,7 @@ public class LimeLight extends SubsystemBase {
     this.ty = table.getEntry("ty");
     this.ta = table.getEntry("ta");
     this.tv = table.getEntry("tv");
-
+    
   }
 
   @Override
@@ -74,9 +74,9 @@ public class LimeLight extends SubsystemBase {
             LimelightHelpers.getLatestResults("limelight").targetingResults;
         if (!(result.botpose[0] == 0 && result.botpose[1] == 0)) {
           if (alliance == Alliance.Blue) {
-            botpose = LimelightHelpers.toPose2D(result.botpose_wpiblue);
+            //botpose = LimelightHelpers.toPose2D(result.botpose_wpiblue);
           } else if (alliance == Alliance.Red) {
-            botpose = LimelightHelpers.toPose2D(result.botpose_wpired);
+            //botpose = LimelightHelpers.toPose2D(result.botpose_wpired);
           }
           if (botpose != null){
           if (field.isPoseWithinArea(botpose)) {
@@ -142,6 +142,9 @@ public class LimeLight extends SubsystemBase {
   public boolean hasTarget(){
     SmartDashboard.putNumber("tv; ", tv.getDouble(0));
     return tv.getDouble(0) != 0;
+  }
+  public void setPipeline(int pipeline){
+    table.getEntry("pipeline").setNumber(pipeline);
   }
 }
 

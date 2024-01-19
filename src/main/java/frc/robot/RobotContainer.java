@@ -16,11 +16,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.GamepadDrive;
+import frc.robot.constants.LimeLightConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.LimeLight;
-import frc.robot.commands.AllignOnGamePiece;
-import frc.robot.commands.DriveToGamePiece;
+import frc.robot.commands.AllignOnLLTarget;
+import frc.robot.commands.DriveToLLTarget;
 
 public class RobotContainer {
   public static RobotContainer instance;
@@ -31,7 +32,7 @@ public class RobotContainer {
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
 
-  //private final LimeLight m_frontLimeLight = new LimeLight("FrontLL", true);
+  //private final LimeLight m_frontLimeLight = new LimeLight("limelight-front", true);
   private final LimeLight m_backLimeLight = new LimeLight("limelight-back", false);
 
   /* Drivetrain 'Requests' */
@@ -61,8 +62,11 @@ public class RobotContainer {
         .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
     // turn to target
-    joystick.x().whileTrue(new DriveToGamePiece(drivetrain, m_backLimeLight));
-    joystick.y().whileTrue(new AllignOnGamePiece(drivetrain, m_backLimeLight));
+    joystick.x().whileTrue(new DriveToLLTarget(drivetrain, m_backLimeLight));
+    joystick.y().whileTrue(new AllignOnLLTarget(drivetrain, m_backLimeLight));
+    
+    joystick.leftBumper().onTrue(new InstantCommand(() -> m_backLimeLight.setPipeline(LimeLightConstants.POSE_ESTIMATION)));
+    joystick.rightBumper().onTrue(new InstantCommand(() -> m_backLimeLight.setPipeline(LimeLightConstants.GAME_PIECE_RECOGNITION)));
 
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
