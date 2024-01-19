@@ -62,7 +62,7 @@ public class GamepadDrive extends Command {
 		m_drivetrain.setControl(drive
 			.withVelocityX(-CommandSwerveDrivetrain.percentOutputToMetersPerSecond(xLimiter.calculate(translationX)))
 			.withVelocityY(CommandSwerveDrivetrain.percentOutputToMetersPerSecond(yLimiter.calculate(translationY))) 
-			.withRotationalRate(-CommandSwerveDrivetrain.percentOutputToRadiansPerSecond(m_gamepad.getRightX())));
+			.withRotationalRate(-CommandSwerveDrivetrain.percentOutputToRadiansPerSecond(rotationLimiter.calculate(m_gamepad.getRightX()))));
 		
 
 		SmartDashboard.putNumber("Throttle", throttle);

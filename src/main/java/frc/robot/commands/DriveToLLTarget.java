@@ -21,6 +21,7 @@ public class DriveToLLTarget extends CommandBase {
   private LimeLight m_LimeLight;
   private CommandSwerveDrivetrain m_Drivetrain;
   private PIDController thetaController = new PIDController(ThetaGains.kP, ThetaGains.kI, ThetaGains.kD);
+  private PIDController xController = new PIDController(1.5,0,0.3);
   public DriveToLLTarget(CommandSwerveDrivetrain drivetrain, LimeLight limelight) {
     addRequirements(drivetrain);
     m_Drivetrain = drivetrain;
@@ -43,7 +44,7 @@ public class DriveToLLTarget extends CommandBase {
   @Override
   public void execute() {
     double thetaOutput = 0;
-    double xOutput = 0.2;
+    double xOutput = 0;
     double yOutput = 0;
 		if (m_LimeLight.hasTarget()){
 			double vertical_angle = m_LimeLight.getVerticalAngleOfErrorDegrees();
@@ -56,11 +57,21 @@ public class DriveToLLTarget extends CommandBase {
 			} else {
 
       }
-		} else {
+
+      double setpoint_x = 0;
+      xController.setSetpoint(setpoint);
+      
+			if (!xController.atSetpoint() ){
+				xOutput = xController.calculate(m_LimeLight.getTy().getDouble(0.0)+18, setpoint_x);
+			} else {
+
+      }
+
+    } else {
 			System.out.println("NO TARGET");
 		}
     
-    m_Drivetrain.setControl(drive.withVelocityX(-CommandSwerveDrivetrain.percentOutputToMetersPerSecond(xOutput)).withVelocityY(yOutput).withRotationalRate(thetaOutput));
+    m_Drivetrain.setControl(drive.withVelocityX(m_Drivetrain.percentOutputToMetersPerSecond(-0.2)).withVelocityY(yOutput).withRotationalRate(thetaOutput));
   }
 
   // Called once the command ends or is interrupted.
