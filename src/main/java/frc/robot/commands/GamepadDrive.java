@@ -19,8 +19,8 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 public class GamepadDrive extends Command {
 	private CommandSwerveDrivetrain m_drivetrain;
 	private CommandXboxController m_gamepad;
-	private SlewRateLimiter xLimiter = new SlewRateLimiter(3);
-	private SlewRateLimiter yLimiter = new SlewRateLimiter(3);
+	private SlewRateLimiter xLimiter = new SlewRateLimiter(2.5);
+	private SlewRateLimiter yLimiter = new SlewRateLimiter(2.5);
 	private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3);
 
 	private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -59,10 +59,11 @@ public class GamepadDrive extends Command {
 			translationY = Math.sin(angle) * throttle;
 		}
 
+		//Applied %50 reduction to rotation
 		m_drivetrain.setControl(drive
 			.withVelocityX(-CommandSwerveDrivetrain.percentOutputToMetersPerSecond(xLimiter.calculate(translationX)))
 			.withVelocityY(CommandSwerveDrivetrain.percentOutputToMetersPerSecond(yLimiter.calculate(translationY))) 
-			.withRotationalRate(-CommandSwerveDrivetrain.percentOutputToRadiansPerSecond(m_gamepad.getRightX())));
+			.withRotationalRate(-CommandSwerveDrivetrain.percentOutputToRadiansPerSecond(rotationLimiter.calculate(m_gamepad.getRightX()/2))));
 		
 
 		SmartDashboard.putNumber("Throttle", throttle);

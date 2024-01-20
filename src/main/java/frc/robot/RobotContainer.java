@@ -13,12 +13,18 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.GamepadDrive;
+import frc.robot.constants.LimeLightConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.LimeLight;
+import frc.robot.commands.AllignOnLLTarget;
+import frc.robot.commands.DriveToLLTarget;
 
 public class RobotContainer {
+  public static RobotContainer instance;
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
@@ -26,6 +32,10 @@ public class RobotContainer {
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
 
+  //private final LimeLight m_frontLimeLight = new LimeLight("limelight-front", true);
+  private final LimeLight m_backLimeLight = new LimeLight("limelight-back", false);
+
+  /* Drivetrain 'Requests' */
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
@@ -33,6 +43,9 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(MaxSpeed);
+  public static RobotContainer getInstance(){
+		return instance;
+	}
 
   private void configureBindings() {
     /*drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
@@ -48,6 +61,13 @@ public class RobotContainer {
     joystick.b().whileTrue(drivetrain
         .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
+    // turn to target
+    joystick.x().whileTrue(new DriveToLLTarget(drivetrain, m_backLimeLight));
+    joystick.y().whileTrue(new AllignOnLLTarget(drivetrain, m_backLimeLight));
+    
+    joystick.leftBumper().onTrue(new InstantCommand(() -> m_backLimeLight.setPipeline(LimeLightConstants.POSE_ESTIMATION)));
+    joystick.rightBumper().onTrue(new InstantCommand(() -> m_backLimeLight.setPipeline(LimeLightConstants.GAME_PIECE_RECOGNITION)));
+
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
@@ -57,13 +77,20 @@ public class RobotContainer {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     }
     drivetrain.registerTelemetry(logger::telemeterize);
+
+    
   }
 
   public RobotContainer() {
+    instance = this;
     configureBindings();
   }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
+  }
+
+  public CommandSwerveDrivetrain getDrivetrain(){
+    return drivetrain;
   }
 }
