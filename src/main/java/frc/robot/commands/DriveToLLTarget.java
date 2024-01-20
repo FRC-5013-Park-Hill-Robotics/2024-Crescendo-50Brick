@@ -8,10 +8,12 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.constants.DrivetrainConstants;
 import frc.robot.constants.InterpolationConstants;
@@ -30,7 +32,10 @@ public class DriveToLLTarget extends CommandBase {
   private double m_horizontal_angle;
   
   private PIDController thetaController = new PIDController(ThetaGains.kP, ThetaGains.kI, ThetaGains.kD);
-  private PIDController xController = new PIDController(1.5,0,0.3);
+
+  TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(2.8, 1.5);
+  private ProfiledPIDController xController = new ProfiledPIDController(1.5,0.0,0.3, constraints  );
+
   public DriveToLLTarget(CommandSwerveDrivetrain drivetrain, LimeLight limelight) {
     addRequirements(drivetrain);
     m_Drivetrain = drivetrain;
@@ -69,8 +74,9 @@ public class DriveToLLTarget extends CommandBase {
     
     double distance = m_Game_Piece_Pose.getTranslation().getDistance(m_Drivetrain.getPose().getTranslation());
     double setpoint_x = 0.5;
-    xController.setSetpoint(setpoint_x);
-		if (!xController.atSetpoint() ){
+
+    //xController.setSetpoint(setpoint_x); when it was a normal pid controller
+		if (!xController.atGoal() ){
 			xOutput = xController.calculate(distance+1, setpoint_x);
 		}
 
