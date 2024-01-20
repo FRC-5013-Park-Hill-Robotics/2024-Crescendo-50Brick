@@ -26,15 +26,15 @@ public class DriveToLLTarget extends CommandBase {
   private LimeLight m_LimeLight;
   private CommandSwerveDrivetrain m_Drivetrain;
   private Pose2d m_Game_Piece_Pose;
-  private Rotation2d m_r;
 
+  private double m_horizontal_angle;
+  
   private PIDController thetaController = new PIDController(ThetaGains.kP, ThetaGains.kI, ThetaGains.kD);
   private PIDController xController = new PIDController(1.5,0,0.3);
   public DriveToLLTarget(CommandSwerveDrivetrain drivetrain, LimeLight limelight) {
     addRequirements(drivetrain);
     m_Drivetrain = drivetrain;
     m_LimeLight = limelight;
-    m_r = new Rotation2d();
   }
   private final SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric()
     .withDeadband(DrivetrainConstants.maxSpeedMetersPerSecond * 0.1).withRotationalDeadband(DrivetrainConstants.maxAngularVelocityRatiansPerSecond * 0.1)
@@ -55,26 +55,26 @@ public class DriveToLLTarget extends CommandBase {
     double thetaOutput = 0;
     double xOutput = 0;
     double yOutput = 0;
-    //Time m_time = m_LimeLight.ge
-
-		if (m_LimeLight.hasTarget()){
+    
+  	if (m_LimeLight.hasTarget()){
       Translation2d t = new Translation2d(InterpolationConstants.GAME_PIECE_INTERPOLATOR.getInterpolatedValue(m_LimeLight.getTy().getDouble(0.0)), 0);
-      m_r = new Rotation2d(m_Drivetrain.getRotation3d().getAngle()+m_LimeLight.getTxAngleRadians());
-      Transform2d i = new Transform2d(t, m_r);
+      Rotation2d r = new Rotation2d(m_Drivetrain.getRotation3d().getAngle()+m_LimeLight.getTxAngleRadians());
+      Transform2d i = new Transform2d(t, r);
       m_Game_Piece_Pose = m_Drivetrain.getPose().transformBy(i);
 
+      m_horizontal_angle = -m_LimeLight.getHorizontalAngleOfErrorDegrees();
     } else {
 			System.out.println("NO TARGET");
 		}
     
     double distance = m_Game_Piece_Pose.getTranslation().getDistance(m_Drivetrain.getPose().getTranslation());
-    double setpoint_x = 1;
+    double setpoint_x = 0.5;
     xController.setSetpoint(setpoint_x);
 		if (!xController.atSetpoint() ){
 			xOutput = xController.calculate(distance+1, setpoint_x);
 		}
 
-		double setpoint = m_r.getRadians();
+		double setpoint = Math.toRadians(m_horizontal_angle)+ m_Drivetrain.getPose().getRotation().getRadians();
     thetaController.setSetpoint(setpoint);
     if (!thetaController.atSetpoint() ){
 			thetaOutput = thetaController.calculate(m_Drivetrain.getPose().getRotation().getRadians(), setpoint);

@@ -19,8 +19,8 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 public class GamepadDrive extends Command {
 	private CommandSwerveDrivetrain m_drivetrain;
 	private CommandXboxController m_gamepad;
-	private SlewRateLimiter xLimiter = new SlewRateLimiter(3);
-	private SlewRateLimiter yLimiter = new SlewRateLimiter(3);
+	private SlewRateLimiter xLimiter = new SlewRateLimiter(2.5);
+	private SlewRateLimiter yLimiter = new SlewRateLimiter(2.5);
 	private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3);
 
 	private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
