@@ -59,10 +59,11 @@ public class GamepadDrive extends Command {
 			translationY = Math.sin(angle) * throttle;
 		}
 
+		//Applied %50 reduction to rotation
 		m_drivetrain.setControl(drive
 			.withVelocityX(-CommandSwerveDrivetrain.percentOutputToMetersPerSecond(xLimiter.calculate(translationX)))
 			.withVelocityY(CommandSwerveDrivetrain.percentOutputToMetersPerSecond(yLimiter.calculate(translationY))) 
-			.withRotationalRate(-CommandSwerveDrivetrain.percentOutputToRadiansPerSecond(rotationLimiter.calculate(m_gamepad.getRightX()))));
+			.withRotationalRate(-CommandSwerveDrivetrain.percentOutputToRadiansPerSecond(rotationLimiter.calculate(m_gamepad.getRightX()/2))));
 		
 
 		SmartDashboard.putNumber("Throttle", throttle);

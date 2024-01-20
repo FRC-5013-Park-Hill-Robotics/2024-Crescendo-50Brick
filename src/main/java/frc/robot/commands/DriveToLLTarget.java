@@ -8,8 +8,13 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.constants.DrivetrainConstants;
+import frc.robot.constants.InterpolationConstants;
 import frc.robot.constants.LimeLightConstants;
 import frc.robot.constants.ThetaGains;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -20,6 +25,8 @@ public class DriveToLLTarget extends CommandBase {
 
   private LimeLight m_LimeLight;
   private CommandSwerveDrivetrain m_Drivetrain;
+  private Pose2d m_Game_Piece_Pose;
+
   private PIDController thetaController = new PIDController(ThetaGains.kP, ThetaGains.kI, ThetaGains.kD);
   private PIDController xController = new PIDController(1.5,0,0.3);
   public DriveToLLTarget(CommandSwerveDrivetrain drivetrain, LimeLight limelight) {
@@ -46,32 +53,33 @@ public class DriveToLLTarget extends CommandBase {
     double thetaOutput = 0;
     double xOutput = 0;
     double yOutput = 0;
+    //Time m_time = m_LimeLight.ge
+
 		if (m_LimeLight.hasTarget()){
-			double vertical_angle = m_LimeLight.getVerticalAngleOfErrorDegrees();
-			double horizontal_amgle = -m_LimeLight.getHorizontalAngleOfErrorDegrees() ;
-			double setpoint = Math.toRadians(horizontal_amgle)+ m_Drivetrain.getPose().getRotation().getRadians();
-      thetaController.setSetpoint(setpoint);
-
-			if (!thetaController.atSetpoint() ){
-				thetaOutput = thetaController.calculate(m_Drivetrain.getPose().getRotation().getRadians(), setpoint);
-			} else {
-
-      }
-
-      double setpoint_x = 0;
-      xController.setSetpoint(setpoint);
-      
-			if (!xController.atSetpoint() ){
-				xOutput = xController.calculate(m_LimeLight.getTy().getDouble(0.0)+18, setpoint_x);
-			} else {
-
-      }
+      Translation2d t = new Translation2d(InterpolationConstants.GAME_PIECE_INTERPOLATOR.getInterpolatedValue(m_LimeLight.getTy().getDouble(0.0)), 0);
+      Rotation2d r = new Rotation2d(m_Drivetrain.getRotation3d().getAngle()+m_LimeLight.getTxAngleRadians());
+      Transform2d i = new Transform2d(t, r);
+      m_Game_Piece_Pose = m_Drivetrain.getPose().transformBy(i);
 
     } else {
 			System.out.println("NO TARGET");
 		}
     
-    m_Drivetrain.setControl(drive.withVelocityX(m_Drivetrain.percentOutputToMetersPerSecond(-0.2)).withVelocityY(yOutput).withRotationalRate(thetaOutput));
+    double distance = m_Game_Piece_Pose.getTranslation().getDistance(m_Drivetrain.getPose().getTranslation());
+    double setpoint_x = 1;
+    xController.setSetpoint(setpoint_x);
+		if (!xController.atSetpoint() ){
+			xOutput = xController.calculate(distance+1, setpoint_x);
+		}
+
+		double horizontal_amgle = -m_LimeLight.getHorizontalAngleOfErrorDegrees() ;
+		double setpoint = Math.toRadians(horizontal_amgle)+ m_Drivetrain.getPose().getRotation().getRadians();
+    thetaController.setSetpoint(setpoint);
+    if (!thetaController.atSetpoint() ){
+			thetaOutput = thetaController.calculate(m_Drivetrain.getPose().getRotation().getRadians(), setpoint);
+		}
+
+    m_Drivetrain.setControl(drive.withVelocityX(xOutput).withVelocityY(yOutput).withRotationalRate(thetaOutput));
   }
 
   // Called once the command ends or is interrupted.
