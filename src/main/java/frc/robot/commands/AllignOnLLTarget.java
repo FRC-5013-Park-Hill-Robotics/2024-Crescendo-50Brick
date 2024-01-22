@@ -8,14 +8,14 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.DrivetrainConstants;
 import frc.robot.constants.LimeLightConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.constants.ThetaGains;
 import frc.robot.subsystems.LimeLight;
 
-public class AllignOnLLTarget extends CommandBase {
+public class AllignOnLLTarget extends Command {
   private LimeLight m_LimeLight;
   private CommandSwerveDrivetrain m_Drivetrain;
   private PIDController thetaController = new PIDController(ThetaGains.kP, ThetaGains.kI, ThetaGains.kD);
