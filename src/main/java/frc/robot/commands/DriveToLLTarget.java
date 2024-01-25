@@ -29,7 +29,7 @@ public class DriveToLLTarget extends Command {
   private CommandSwerveDrivetrain m_Drivetrain;
   private Pose2d m_Game_Piece_Pose;
 
-  private double m_horizontal_angle;
+  private Rotation2d m_horizontal_angle;
   
   private PIDController thetaController = new PIDController(ThetaGains.kP, ThetaGains.kI, ThetaGains.kD);
 
@@ -66,12 +66,14 @@ public class DriveToLLTarget extends Command {
       Rotation2d r = new Rotation2d(m_Drivetrain.getRotation3d().getAngle()+m_LimeLight.getTxAngleRadians());
       Transform2d i = new Transform2d(t, r);
       m_Game_Piece_Pose = m_Drivetrain.getPose().transformBy(i);
-
-      m_horizontal_angle = -m_LimeLight.getHorizontalAngleOfErrorDegrees();
     } else {
 			System.out.println("NO TARGET");
 		}
     
+    m_horizontal_angle =
+      Rotation2d.fromRadians(3 * Math.PI / 2)
+        .minus(m_Game_Piece_Pose.getTranslation().minus(m_Drivetrain.getPose().getTranslation()).getAngle());
+
     double distance = m_Game_Piece_Pose.getTranslation().getDistance(m_Drivetrain.getPose().getTranslation());
     double setpoint_x = 0.5;
 
@@ -80,7 +82,7 @@ public class DriveToLLTarget extends Command {
 			xOutput = xController.calculate(distance+1, setpoint_x);
 		}
 
-		double setpoint = Math.toRadians(m_horizontal_angle)+ m_Drivetrain.getPose().getRotation().getRadians();
+		double setpoint = m_horizontal_angle.getRadians()+ m_Drivetrain.getPose().getRotation().getRadians();
     thetaController.setSetpoint(setpoint);
     if (!thetaController.atSetpoint() ){
 			thetaOutput = thetaController.calculate(m_Drivetrain.getPose().getRotation().getRadians(), setpoint);
