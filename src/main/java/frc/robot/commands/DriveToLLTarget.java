@@ -43,7 +43,7 @@ public class DriveToLLTarget extends Command {
     m_LimeLight = limelight;
   }
   private final SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric()
-    .withDeadband(DrivetrainConstants.maxSpeedMetersPerSecond * 0.1).withRotationalDeadband(DrivetrainConstants.maxAngularVelocityRatiansPerSecond * 0.1)
+    .withDeadband(DrivetrainConstants.maxSpeedMetersPerSecond * 0.1).withRotationalDeadband(DrivetrainConstants.maxAngularVelocityRadiansPerSecond * 0.1)
     .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();

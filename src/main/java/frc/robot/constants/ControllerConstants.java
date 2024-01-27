@@ -6,5 +6,5 @@ package frc.robot.constants;
 
 /** Add your docs here. */
 public class ControllerConstants {
-    public static double DEADBAND = 0.1;
+    public static double DEADBAND = 0.05;
 }

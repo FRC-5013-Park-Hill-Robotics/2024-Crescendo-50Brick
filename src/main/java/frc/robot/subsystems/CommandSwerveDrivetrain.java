@@ -117,7 +117,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 	}
 
 	public static double percentOutputToRadiansPerSecond(double percentOutput) {
-		return DrivetrainConstants.maxAngularVelocityRatiansPerSecond * percentOutput;
+		return DrivetrainConstants.maxAngularVelocityRadiansPerSecond * percentOutput;
 	}
 
     public Pose2d getPose(){
