@@ -91,6 +91,7 @@ public class RobotContainer {
     instance = this;
     configureBindings();
 
+    SmartDashboard.clearPersistent("Auto Chooser");
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
 
