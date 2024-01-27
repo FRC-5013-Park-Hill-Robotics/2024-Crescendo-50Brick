@@ -2,36 +2,36 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4662605074140238,
-      "y": 3.1385041942694443
+      "x": 0.7392210795817603,
+      "y": 4.397002070357417
     },
-    "rotation": 0
+    "rotation": 122.27564431457763
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Test Path"
+            "name": "Warm Up Shooter"
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 1.0
+            "name": "Arm to Subwoofer"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Test Path To Start"
+            "name": "Shoot"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Source Side",
   "choreoAuto": false
 }
