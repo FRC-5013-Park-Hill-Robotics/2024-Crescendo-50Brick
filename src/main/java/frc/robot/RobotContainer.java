@@ -94,6 +94,8 @@ public class RobotContainer {
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
 
+    SmartDashboard.clearPersistent("Auto Chooser");
+
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
