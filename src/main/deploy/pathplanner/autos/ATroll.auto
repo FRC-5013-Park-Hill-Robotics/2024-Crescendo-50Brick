@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.044670391765889,
-      "y": 3.3727209251850745
+      "x": 1.4267285779652068,
+      "y": 7.195984338301414
     },
     "rotation": 0
   },
@@ -14,13 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Test Path"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Test Path To Start"
+            "pathName": "ATroll"
           }
         }
       ]
