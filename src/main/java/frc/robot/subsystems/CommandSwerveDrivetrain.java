@@ -128,7 +128,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         //m_odometry.getPose();
     
     public void zeroGyroscope(){
-        m_pigeon2.setYaw(90);
+        m_pigeon2.setYaw(0);
     }
     
     //revert
