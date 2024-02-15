@@ -68,7 +68,7 @@ public class RobotContainer {
         .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
     // turn to target
-    joystick.x().whileTrue(new DriveToLLTarget(drivetrain, m_backLimeLight));
+    joystick.x().whileTrue(new DriveToLLTarget(drivetrain, m_backLimeLight,0.5));
     joystick.y().whileTrue(new AllignOnLLTarget(drivetrain, m_backLimeLight));
     
     joystick.leftBumper().onTrue(new InstantCommand(() -> m_backLimeLight.setPipeline(LimeLightConstants.POSE_ESTIMATION)));
@@ -80,7 +80,7 @@ public class RobotContainer {
     joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.zeroGyroscope()));
 
     if (Utils.isSimulation()) {
-      drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
+      drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)));
     }
     drivetrain.registerTelemetry(logger::telemeterize);
 
