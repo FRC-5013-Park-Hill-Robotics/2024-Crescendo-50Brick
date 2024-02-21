@@ -5,10 +5,15 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+
+import java.util.Optional;
+
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -22,11 +27,13 @@ public class GamepadDrive extends Command {
 	private SlewRateLimiter xLimiter = new SlewRateLimiter(2.5);
 	private SlewRateLimiter yLimiter = new SlewRateLimiter(2.5);
 	private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3);
+	private Alliance m_alliance;
 
 	private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(DrivetrainConstants.maxAngularVelocityRadiansPerSecond * ControllerConstants.DEADBAND).withRotationalDeadband(DrivetrainConstants.maxAngularVelocityRadiansPerSecond * ControllerConstants.DEADBAND) // Add a 5% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
+	private final SwerveRequest.FieldCentricFacingAngle turnTo = new SwerveRequest.FieldCentricFacingAngle();
   	private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   	private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
@@ -39,6 +46,7 @@ public class GamepadDrive extends Command {
 		addRequirements(drivetrain);
 		m_gamepad = gamepad;
 		m_drivetrain = drivetrain;
+		m_alliance = DriverStation.getAlliance().get();
 	}
 
 	@Override

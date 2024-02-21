@@ -10,19 +10,19 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.DrivetrainConstants;
-import frc.robot.constants.LimeLightConstants;
+import frc.robot.constants.LimelightConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.constants.ThetaGains;
-import frc.robot.subsystems.LimeLight;
+import frc.robot.subsystems.Limelight;
 
 public class AllignOnLLTarget extends Command {
-  private LimeLight m_LimeLight;
+  private Limelight m_Limelight;
   private CommandSwerveDrivetrain m_Drivetrain;
   private PIDController thetaController = new PIDController(ThetaGains.kP, ThetaGains.kI, ThetaGains.kD);
-  public AllignOnLLTarget(CommandSwerveDrivetrain drivetrain, LimeLight limelight) {
+  public AllignOnLLTarget(CommandSwerveDrivetrain drivetrain, Limelight Limelight) {
     addRequirements(drivetrain);
     m_Drivetrain = drivetrain;
-    m_LimeLight = limelight;
+    m_Limelight = Limelight;
   }
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
     .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -33,7 +33,7 @@ public class AllignOnLLTarget extends Command {
   @Override
   public void initialize() {
     thetaController.reset();
-    thetaController.setTolerance(LimeLightConstants.ALLIGNMENT_TOLLERANCE_RADIANS);
+    thetaController.setTolerance(LimelightConstants.ALLIGNMENT_TOLLERANCE_RADIANS);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -42,9 +42,9 @@ public class AllignOnLLTarget extends Command {
     double thetaOutput = 0;
     double xOutput = 0;
     double yOutput = 0;
-		if (m_LimeLight.hasTarget()){
-			double vertical_angle = m_LimeLight.getVerticalAngleOfErrorDegrees();
-			double horizontal_angle = -m_LimeLight.getHorizontalAngleOfErrorDegrees() ;
+		if (m_Limelight.hasTarget()){
+			double vertical_angle = m_Limelight.getVerticalAngleOfErrorDegrees();
+			double horizontal_angle = -m_Limelight.getHorizontalAngleOfErrorDegrees() ;
 			double setpoint = Math.toRadians(horizontal_angle)+ m_Drivetrain.getPose().getRotation().getRadians();
       thetaController.setSetpoint(setpoint);
 
