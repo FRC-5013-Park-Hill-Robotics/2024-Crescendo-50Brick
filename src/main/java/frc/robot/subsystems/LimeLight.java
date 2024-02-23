@@ -10,12 +10,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.RobotContainer;
-import frc.robot.constants.LimeLightConstants;
+import frc.robot.constants.LimelightConstants;
 import frc.robot.trobot5013lib.LimelightHelpers;
 import webblib.util.RectanglePoseArea;
 
-public class LimeLight extends SubsystemBase {
+public class Limelight extends SubsystemBase {
   /** Creates a new LimeLight. */
   public static final RectanglePoseArea field =
   new RectanglePoseArea(new Translation2d(0.0, 0.0), new Translation2d(16.54, 8.02));
@@ -32,14 +33,15 @@ public class LimeLight extends SubsystemBase {
   private int fieldError = 0;
   private int distanceError = 0;
   private Pose2d botpose;
-  public LimeLight(String name, boolean aprilTagViable) {
+  private String name;
+  public Limelight(String name, boolean aprilTagViable) {
     /**
      * tx - Horizontal Offset
      * ty - Vertical Offset 
      * ta - Area of target 
      * tv - Target Visible
      */
-
+    this.name = name;
     this.table = NetworkTableInstance.getDefault().getTable(name);
 
     this.aprilTagViable = aprilTagViable;
@@ -48,7 +50,6 @@ public class LimeLight extends SubsystemBase {
     this.ty = table.getEntry("ty");
     this.ta = table.getEntry("ta");
     this.tv = table.getEntry("tv");
-    
   }
 
   @Override
@@ -67,35 +68,37 @@ public class LimeLight extends SubsystemBase {
     SmartDashboard.putNumber("LimelightArea", area);
 
 
-    if (aprilTagViable) {
+    if (aprilTagViable ) {
 
       CommandSwerveDrivetrain drivebase = RobotContainer.getInstance().getDrivetrain();
       LimelightHelpers.Results result =
-            LimelightHelpers.getLatestResults("limelight").targetingResults;
+            LimelightHelpers.getLatestResults(name).targetingResults;
         if (!(result.botpose[0] == 0 && result.botpose[1] == 0)) {
           if (alliance == Alliance.Blue) {
-            //botpose = LimelightHelpers.toPose2D(result.botpose_wpiblue);
+            botpose = LimelightHelpers.toPose2D(result.botpose_wpiblue);
           } else if (alliance == Alliance.Red) {
-            //botpose = LimelightHelpers.toPose2D(result.botpose_wpired);
+            botpose = LimelightHelpers.toPose2D(result.botpose_wpired);
           }
           if (botpose != null){
           if (field.isPoseWithinArea(botpose)) {
             if (drivebase.getPose().getTranslation().getDistance(botpose.getTranslation()) < 0.33
                 || trust || result.targets_Fiducials.length > 1) {
-              /**drivebase.addVisionMeasurement(
+              SmartDashboard.putBoolean("Printing", true);
+              drivebase.addVisionMeasurement(
                   botpose,
                   Timer.getFPGATimestamp()
                       - (result.latency_capture / 1000.0)
                       - (result.latency_pipeline / 1000.0),
                   true,
                   1.0);
-              **/
+              
             } else {
               distanceError++;
               SmartDashboard.putNumber("Limelight Error", distanceError);
             }
           } else {
             fieldError++;
+            SmartDashboard.putBoolean("Printing", false);
             SmartDashboard.putNumber("Field Error", fieldError);
           }
         }
@@ -111,16 +114,26 @@ public class LimeLight extends SubsystemBase {
   }
   public double getHorizontalAngleOfErrorDegrees(){
     //+1 is a fudge factor cor camera mounting
-    return getTx().getDouble(0.0) + LimeLightConstants.HORIZONTAL_OFFSET;
+    return getTx().getDouble(0.0) + LimelightConstants.HORIZONTAL_OFFSET;
   }
 
   public double getVerticalAngleOfErrorDegrees(){
     //+1 is a fudge factor cor camera mounting
-    return getTy().getDouble(0.0) + LimeLightConstants.VERTICAL_OFFSET;
+    return getTy().getDouble(0.0) + LimelightConstants.VERTICAL_OFFSET;
+  }
+
+  public void setPipelineAprilTag(){
+    aprilTagViable = true;
+    setPipeline(LimelightConstants.APRIL_TAG_TARGETING);
+  }
+
+  public void setPipelineObjectDecection(){
+    aprilTagViable = false;
+    setPipeline(LimelightConstants.GAME_PIECE_RECOGNITION);
   }
 
 
- public NetworkTableEntry getTx() {
+  public NetworkTableEntry getTx() {
     return tx;
   }
 
@@ -147,4 +160,5 @@ public class LimeLight extends SubsystemBase {
     table.getEntry("pipeline").setNumber(pipeline);
   }
 }
+
 

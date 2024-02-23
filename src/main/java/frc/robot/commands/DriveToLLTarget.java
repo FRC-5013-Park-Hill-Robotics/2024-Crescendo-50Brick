@@ -18,15 +18,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.DrivetrainConstants;
 import frc.robot.constants.InterpolationConstants;
-import frc.robot.constants.LimeLightConstants;
+import frc.robot.constants.LimelightConstants;
 import frc.robot.constants.ThetaGains;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.LimeLight;
+import frc.robot.subsystems.Limelight;
 
 /** Add your docs here. */
 public class DriveToLLTarget extends Command {
 
-  private LimeLight m_LimeLight;
+  private Limelight m_Limelight;
   private CommandSwerveDrivetrain m_Drivetrain;
   private Pose2d m_Game_Piece_Pose;
 
@@ -41,16 +41,16 @@ public class DriveToLLTarget extends Command {
   private ProfiledPIDController yController = new ProfiledPIDController(4,0.0,0.3, constraints);
 
 
-  public DriveToLLTarget(CommandSwerveDrivetrain drivetrain, LimeLight limelight) {
+  public DriveToLLTarget(CommandSwerveDrivetrain drivetrain, Limelight Limelight) {
     addRequirements(drivetrain);
     m_Drivetrain = drivetrain;
-    m_LimeLight = limelight;
+    m_Limelight = Limelight;
   }
 
-  public DriveToLLTarget(CommandSwerveDrivetrain drivetrain, LimeLight limelight, double speed_modifier) {
+  public DriveToLLTarget(CommandSwerveDrivetrain drivetrain, Limelight Limelight, double speed_modifier) {
     addRequirements(drivetrain);
     m_Drivetrain = drivetrain;
-    m_LimeLight = limelight;
+    m_Limelight = Limelight;
     m_speed_modifier = speed_modifier;
   }
   
@@ -61,7 +61,7 @@ public class DriveToLLTarget extends Command {
   @Override
   public void initialize() {
     thetaController.reset();
-    thetaController.setTolerance(LimeLightConstants.ALLIGNMENT_TOLLERANCE_RADIANS);
+    thetaController.setTolerance(LimelightConstants.ALLIGNMENT_TOLLERANCE_RADIANS);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -71,13 +71,13 @@ public class DriveToLLTarget extends Command {
     double xOutput = 0;
     double yOutput = 0;
     
-  	if (m_LimeLight.hasTarget()){
-      Translation2d t = new Translation2d(InterpolationConstants.GAME_PIECE_INTERPOLATOR.getInterpolatedValue(m_LimeLight.getTy().getDouble(0.0)), 0);
-      Rotation2d r = new Rotation2d(m_Drivetrain.getRotation3d().getAngle()+m_LimeLight.getTxAngleRadians());
+  	if (m_Limelight.hasTarget()){
+      Translation2d t = new Translation2d(InterpolationConstants.GAME_PIECE_INTERPOLATOR.getInterpolatedValue(m_Limelight.getTy().getDouble(0.0)), 0);
+      Rotation2d r = new Rotation2d(m_Drivetrain.getRotation3d().getAngle()+m_Limelight.getTxAngleRadians());
       Transform2d i = new Transform2d(t, r);
       m_Game_Piece_Pose = m_Drivetrain.getPose().transformBy(i);
 
-      m_horizontal_angle = m_LimeLight.getHorizontalAngleOfErrorDegrees();
+      m_horizontal_angle = m_Limelight.getHorizontalAngleOfErrorDegrees();
     } else {
 			System.out.println("NO TARGET");
 		}

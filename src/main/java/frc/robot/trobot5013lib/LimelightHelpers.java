@@ -763,7 +763,12 @@ public class LimelightHelpers {
         }
 
         try {
-            results = mapper.readValue(getJSONDump(limelightName), LimelightResults.class);
+            String str = getJSONDump(limelightName);
+            if (str == null || str.length() == 0){
+            
+            } else {
+                results = mapper.readValue(str, LimelightResults.class);
+            }
         } catch (JsonProcessingException e) {
             System.err.println("lljson error: " + e.getMessage());
         }
