@@ -18,12 +18,15 @@ import frc.robot.subsystems.LimeLight;
 public class AllignOnLLTarget extends Command {
   private LimeLight m_Limelight;
   private CommandSwerveDrivetrain m_Drivetrain;
+  private int m_pipeline;
   private PIDController thetaController = new PIDController(ThetaGains.kP, ThetaGains.kI, ThetaGains.kD);
-  public AllignOnLLTarget(CommandSwerveDrivetrain drivetrain, LimeLight Limelight) {
+  public AllignOnLLTarget(CommandSwerveDrivetrain drivetrain, LimeLight Limelight, int pipeline) {
     addRequirements(drivetrain);
     m_Drivetrain = drivetrain;
     m_Limelight = Limelight;
+    m_pipeline = pipeline;
   }
+
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
     .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -32,6 +35,7 @@ public class AllignOnLLTarget extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_Limelight.setPipeline(m_pipeline);
     thetaController.reset();
     thetaController.setTolerance(LimeLightConstants.ALLIGNMENT_TOLLERANCE_RADIANS);
   }

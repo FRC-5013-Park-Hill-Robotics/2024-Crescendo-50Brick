@@ -9,6 +9,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.RobotContainer;
@@ -68,7 +69,7 @@ public class LimeLight extends SubsystemBase {
     SmartDashboard.putNumber("LimelightArea", area);
 
 
-    if (aprilTagViable ) {
+    if (aprilTagViable && table.getEntry("pipeline").getValue().getDouble() == LimeLightConstants.APRIL_TAG_TARGETING) {
 
       CommandSwerveDrivetrain drivebase = RobotContainer.getInstance().getDrivetrain();
       LimelightHelpers.Results result =
@@ -153,6 +154,10 @@ public class LimeLight extends SubsystemBase {
   }
   public void setPipeline(int pipeline){
     table.getEntry("pipeline").setNumber(pipeline);
+  }
+  public Command setPipelineCommand(int pipeline){
+    Command result = runOnce(()->setPipeline(pipeline));
+    return result;
   }
 }
 
