@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.LimeLight;
 
 public class Robot extends TimedRobot {
@@ -19,7 +20,8 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
   private Optional<Alliance> m_alliance = null;
 
-  private void checkUpdateAlliance(){    
+  private void checkUpdateAlliance(){
+
     Optional<Alliance> alliance =  DriverStation.getAlliance();
     if(DriverStation.isDSAttached() && alliance.isPresent()  && alliance != m_alliance){
       //Limelight frontLL = m_robotContainer.getFLL();
@@ -27,6 +29,8 @@ public class Robot extends TimedRobot {
       //frontLL.setAlliance(alliance);
       backLL.setAlliance(alliance.get());
     }
+
+    m_robotContainer.getDrivetrain().zeroGyroscope(); 
   }
 
   @Override
@@ -59,7 +63,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    checkUpdateAlliance();
   }
 
   @Override
@@ -75,7 +78,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    checkUpdateAlliance();
   }
 
   @Override

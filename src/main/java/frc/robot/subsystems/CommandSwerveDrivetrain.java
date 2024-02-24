@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.Utils;
@@ -12,9 +13,11 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -45,8 +48,19 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private double m_lastSimTime;
     private Field2d m_field = new Field2d();
 
+    private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
+
+    /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
+    private final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
+    /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
+    private final Rotation2d RedAlliancePerspectiveRotation = Rotation2d.fromDegrees(180);
+    /* Keep track if we've ever applied the operator perspective before or not */
+    private boolean hasAppliedOperatorPerspective = false;
+
+
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency, SwerveModuleConstants... modules) {
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
+        //configurePathPlanner();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -55,6 +69,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
+        //configurePathPlanner();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -68,6 +83,29 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             configs.withSupplyCurrentLimitEnable(true);
             module.getDriveMotor().getConfigurator().apply(configs);
         }
+    }
+
+    @Override
+    public void periodic() {
+        m_field.setRobotPose(m_odometry.getEstimatedPosition());
+
+        SmartDashboard.putNumber("X POSITION (meters)", getPose().getX());
+        SmartDashboard.putNumber("Y POSITION (meters)", getPose().getY());
+        SmartDashboard.putNumber("Rotation (degrees)", getPose().getRotation().getDegrees());
+        SmartDashboard.putData("Field", m_field);
+
+        if (!hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
+            DriverStation.getAlliance().ifPresent((allianceColor) -> {
+                this.setOperatorPerspectiveForward(
+                        allianceColor == Alliance.Red ? RedAlliancePerspectiveRotation
+                                : BlueAlliancePerspectiveRotation);
+                hasAppliedOperatorPerspective = true;
+            });
+        }
+    }
+
+    public void configurePathPlanner() {
+        double driveBaseRadius = DrivetrainConstants.rotationDiameter/2;
 
     }
 
@@ -118,12 +156,6 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
     private SwerveVoltageRequest steerVoltageRequest = new SwerveVoltageRequest(false);
 
-    @Override
-    public void periodic() {
-        m_field.setRobotPose(m_odometry.getEstimatedPosition());
-        SmartDashboard.putData("Field",m_field);
-    }
-
     private SysIdRoutine m_steerSysIdRoutine =
     new SysIdRoutine(
         new SysIdRoutine.Config(null, null, null, ModifiedSignalLogger.logState()),
@@ -164,10 +196,21 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     }
 
     public Pose2d getPose(){
+        //return m_odometry.getEstimatedPosition();
         return this.getState().Pose;
     }
 
     public void zeroGyroscope(){
-        m_pigeon2.setYaw(0);
+        Alliance alliance = DriverStation.getAlliance().get();
+
+        if (alliance == Alliance.Red) {
+            m_pigeon2.setYaw(180);
+        }
+        
+        else {
+            m_pigeon2.setYaw(0);
+        }
+
+        
     }
 }

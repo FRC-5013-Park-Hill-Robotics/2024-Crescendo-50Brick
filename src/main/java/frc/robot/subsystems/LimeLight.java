@@ -74,16 +74,12 @@ public class LimeLight extends SubsystemBase {
       LimelightHelpers.Results result =
             LimelightHelpers.getLatestResults(name).targetingResults;
         if (!(result.botpose[0] == 0 && result.botpose[1] == 0)) {
-          if (alliance == Alliance.Blue) {
-            botpose = LimelightHelpers.toPose2D(result.botpose_wpiblue);
-          } else if (alliance == Alliance.Red) {
-            botpose = LimelightHelpers.toPose2D(result.botpose_wpired);
-          }
+          botpose = LimelightHelpers.toPose2D(result.botpose_wpiblue);
           if (botpose != null){
           if (field.isPoseWithinArea(botpose)) {
             if (drivebase.getPose().getTranslation().getDistance(botpose.getTranslation()) < 0.33
                 || trust || result.targets_Fiducials.length > 1) {
-              SmartDashboard.putBoolean("Printing", true);
+              
               drivebase.addVisionMeasurement(
                   botpose,
                   Timer.getFPGATimestamp()
@@ -98,7 +94,6 @@ public class LimeLight extends SubsystemBase {
             }
           } else {
             fieldError++;
-            SmartDashboard.putBoolean("Printing", false);
             SmartDashboard.putNumber("Field Error", fieldError);
           }
         }

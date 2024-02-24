@@ -12,6 +12,9 @@ public class LimeLightConstants {
     public static final int APRIL_TAG_TARGETING = 0;
     public static final int GAME_PIECE_RECOGNITION = 1;
 
+    public static final int APRIL_TAG_BLUE_SPEAKER = 2;
+    public static final int APRIL_TAG_RED_SPEAKER = 3;
+
     public static final double FRONT_LL_VERTICAL_ANGLE_DEG = 23.5;
 
     //FRONT DISTANCE FROM CENTER OF BOT IN THE X DIMENSION
