@@ -12,9 +12,9 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 /** Add your docs here. */
 public class AprilTagHelpers {
 
-    Alliance alliance = DriverStation.getAlliance().get();
+    private static Alliance alliance = DriverStation.getAlliance().get();
 
-    public int getSpeakerID() {
+    public static int getSpeakerID() {
         if (alliance == Alliance.Red) {
             return 4;
         }

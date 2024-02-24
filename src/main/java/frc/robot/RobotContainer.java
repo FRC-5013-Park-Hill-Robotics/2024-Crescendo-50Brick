@@ -13,12 +13,14 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.GamepadDrive;
 import frc.robot.constants.LimeLightConstants;
 import frc.robot.generated.TunerConstants;
@@ -64,16 +66,17 @@ public class RobotContainer {
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));*/
     
-    drivetrain.setDefaultCommand(new GamepadDrive(drivetrain, joystick));
+    drivetrain.setDefaultCommand(new GamepadDrive(drivetrain, joystick, m_backLimeLight));
     
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    joystick.b().whileTrue(drivetrain
-        .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
-
+    
     // turn to target
     joystick.x().whileTrue(new DriveToLLTarget(drivetrain, m_backLimeLight,0.5));
-    joystick.y().whileTrue(new AllignOnLLTarget(drivetrain, m_backLimeLight));
+    joystick.y().whileTrue(new AllignOnLLTarget(drivetrain, m_backLimeLight, LimeLightConstants.APRIL_TAG_TARGETING));
     
+    int pipeline = (DriverStation.getAlliance().get() == Alliance.Red)?LimeLightConstants.APRIL_TAG_RED_SPEAKER:LimeLightConstants.APRIL_TAG_BLUE_SPEAKER;
+    joystick.b().whileTrue(new AllignOnLLTarget(drivetrain, m_backLimeLight, pipeline)).onFalse(m_backLimeLight.setPipelineCommand(LimeLightConstants.APRIL_TAG_TARGETING));
+
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
