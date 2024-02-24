@@ -12,11 +12,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.RobotContainer;
-import frc.robot.constants.LimelightConstants;
+import frc.robot.constants.LimeLightConstants;
 import frc.robot.trobot5013lib.LimelightHelpers;
 import webblib.util.RectanglePoseArea;
 
-public class Limelight extends SubsystemBase {
+public class LimeLight extends SubsystemBase {
   /** Creates a new LimeLight. */
   public static final RectanglePoseArea field =
   new RectanglePoseArea(new Translation2d(0.0, 0.0), new Translation2d(16.54, 8.02));
@@ -34,7 +34,7 @@ public class Limelight extends SubsystemBase {
   private int distanceError = 0;
   private Pose2d botpose;
   private String name;
-  public Limelight(String name, boolean aprilTagViable) {
+  public LimeLight(String name, boolean aprilTagViable) {
     /**
      * tx - Horizontal Offset
      * ty - Vertical Offset 
@@ -114,22 +114,22 @@ public class Limelight extends SubsystemBase {
   }
   public double getHorizontalAngleOfErrorDegrees(){
     //+1 is a fudge factor cor camera mounting
-    return getTx().getDouble(0.0) + LimelightConstants.HORIZONTAL_OFFSET;
+    return getTx().getDouble(0.0) + LimeLightConstants.HORIZONTAL_OFFSET;
   }
 
   public double getVerticalAngleOfErrorDegrees(){
     //+1 is a fudge factor cor camera mounting
-    return getTy().getDouble(0.0) + LimelightConstants.VERTICAL_OFFSET;
+    return getTy().getDouble(0.0) + LimeLightConstants.VERTICAL_OFFSET;
   }
 
   public void setPipelineAprilTag(){
     aprilTagViable = true;
-    setPipeline(LimelightConstants.APRIL_TAG_TARGETING);
+    setPipeline(LimeLightConstants.APRIL_TAG_TARGETING);
   }
 
   public void setPipelineObjectDecection(){
     aprilTagViable = false;
-    setPipeline(LimelightConstants.GAME_PIECE_RECOGNITION);
+    setPipeline(LimeLightConstants.GAME_PIECE_RECOGNITION);
   }
 
 
