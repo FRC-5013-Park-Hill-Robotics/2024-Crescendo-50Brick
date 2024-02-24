@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -73,7 +74,8 @@ public class RobotContainer {
     joystick.x().whileTrue(new DriveToLLTarget(drivetrain, m_backLimeLight,0.5));
     joystick.y().whileTrue(new AllignOnLLTarget(drivetrain, m_backLimeLight, LimeLightConstants.APRIL_TAG_TARGETING));
     
-    joystick.b().whileTrue(new AllignOnLLTarget(drivetrain, m_backLimeLight, LimeLightConstants.APRIL_TAG_RED_SPEAKER)).onFalse(m_backLimeLight.setPipelineCommand(LimeLightConstants.APRIL_TAG_TARGETING));
+    int pipeline = (DriverStation.getAlliance().get() == Alliance.Red)?LimeLightConstants.APRIL_TAG_RED_SPEAKER:LimeLightConstants.APRIL_TAG_BLUE_SPEAKER;
+    joystick.b().whileTrue(new AllignOnLLTarget(drivetrain, m_backLimeLight, pipeline)).onFalse(m_backLimeLight.setPipelineCommand(LimeLightConstants.APRIL_TAG_TARGETING));
 
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
