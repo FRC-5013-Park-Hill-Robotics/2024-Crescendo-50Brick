@@ -46,7 +46,6 @@ public class GamepadDrive extends Command {
 		addRequirements(drivetrain);
 		m_gamepad = gamepad;
 		m_drivetrain = drivetrain;
-		m_alliance = DriverStation.getAlliance().get();
 	}
 
 	@Override

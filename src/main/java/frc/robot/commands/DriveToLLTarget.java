@@ -18,15 +18,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.DrivetrainConstants;
 import frc.robot.constants.InterpolationConstants;
-import frc.robot.constants.LimelightConstants;
+import frc.robot.constants.LimeLightConstants;
 import frc.robot.constants.ThetaGains;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.LimeLight;
 
 /** Add your docs here. */
 public class DriveToLLTarget extends Command {
 
-  private Limelight m_Limelight;
+  private LimeLight m_Limelight;
   private CommandSwerveDrivetrain m_Drivetrain;
   private Pose2d m_Game_Piece_Pose;
 
@@ -41,13 +41,13 @@ public class DriveToLLTarget extends Command {
   private ProfiledPIDController yController = new ProfiledPIDController(4,0.0,0.3, constraints);
 
 
-  public DriveToLLTarget(CommandSwerveDrivetrain drivetrain, Limelight Limelight) {
+  public DriveToLLTarget(CommandSwerveDrivetrain drivetrain, LimeLight Limelight) {
     addRequirements(drivetrain);
     m_Drivetrain = drivetrain;
     m_Limelight = Limelight;
   }
 
-  public DriveToLLTarget(CommandSwerveDrivetrain drivetrain, Limelight Limelight, double speed_modifier) {
+  public DriveToLLTarget(CommandSwerveDrivetrain drivetrain, LimeLight Limelight, double speed_modifier) {
     addRequirements(drivetrain);
     m_Drivetrain = drivetrain;
     m_Limelight = Limelight;
@@ -61,7 +61,7 @@ public class DriveToLLTarget extends Command {
   @Override
   public void initialize() {
     thetaController.reset();
-    thetaController.setTolerance(LimelightConstants.ALLIGNMENT_TOLLERANCE_RADIANS);
+    thetaController.setTolerance(LimeLightConstants.ALLIGNMENT_TOLLERANCE_RADIANS);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

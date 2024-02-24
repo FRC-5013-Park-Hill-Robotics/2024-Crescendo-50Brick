@@ -10,16 +10,16 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.DrivetrainConstants;
-import frc.robot.constants.LimelightConstants;
+import frc.robot.constants.LimeLightConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.constants.ThetaGains;
-import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.LimeLight;
 
 public class AllignOnLLTarget extends Command {
-  private Limelight m_Limelight;
+  private LimeLight m_Limelight;
   private CommandSwerveDrivetrain m_Drivetrain;
   private PIDController thetaController = new PIDController(ThetaGains.kP, ThetaGains.kI, ThetaGains.kD);
-  public AllignOnLLTarget(CommandSwerveDrivetrain drivetrain, Limelight Limelight) {
+  public AllignOnLLTarget(CommandSwerveDrivetrain drivetrain, LimeLight Limelight) {
     addRequirements(drivetrain);
     m_Drivetrain = drivetrain;
     m_Limelight = Limelight;
@@ -33,7 +33,7 @@ public class AllignOnLLTarget extends Command {
   @Override
   public void initialize() {
     thetaController.reset();
-    thetaController.setTolerance(LimelightConstants.ALLIGNMENT_TOLLERANCE_RADIANS);
+    thetaController.setTolerance(LimeLightConstants.ALLIGNMENT_TOLLERANCE_RADIANS);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

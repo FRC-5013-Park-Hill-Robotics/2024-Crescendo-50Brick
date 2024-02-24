@@ -20,10 +20,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.GamepadDrive;
-import frc.robot.constants.LimelightConstants;
+import frc.robot.constants.LimeLightConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.LimeLight;
 import frc.robot.commands.AllignOnLLTarget;
 import frc.robot.commands.DriveToLLTarget;
 
@@ -37,11 +37,7 @@ public class RobotContainer {
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
 
   //private final LimeLight m_frontLimeLight = new LimeLight("limelight-front", true);
-<<<<<<< Updated upstream
-  private final Limelight m_backLimeLight = new Limelight("limelight-back", true);
-=======
   private final LimeLight m_backLimeLight = new LimeLight("limelight-back", true);
->>>>>>> Stashed changes
 
   /* Drivetrain 'Requests' */
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -68,12 +64,11 @@ public class RobotContainer {
         ));*/
     
     drivetrain.setDefaultCommand(new GamepadDrive(drivetrain, joystick));
-    /*
+    
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
     joystick.b().whileTrue(drivetrain
         .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
-    */
     // turn to target
     joystick.x().whileTrue(new DriveToLLTarget(drivetrain, m_backLimeLight,0.5));
     joystick.y().whileTrue(new AllignOnLLTarget(drivetrain, m_backLimeLight));
@@ -82,10 +77,6 @@ public class RobotContainer {
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
     joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.zeroGyroscope()));
-
-
-    joystick.a().whileTrue(new InstantCommand(() -> m_backLimeLight.setTrust(true)))
-    .onFalse(new InstantCommand(() -> m_backLimeLight.setTrust(false)));
 
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)));
@@ -99,7 +90,7 @@ public class RobotContainer {
     instance = this;
     configureBindings();
 
-    //SmartDashboard.clearPersistent("Auto Chooser");
+    SmartDashboard.clearPersistent("Auto Chooser");
     // Build an auto chooser. This will use Commands.none() as the default option.
     //autoChooser = AutoBuilder.buildAutoChooser();
 
@@ -107,36 +98,20 @@ public class RobotContainer {
 
     //SmartDashboard.putData("Auto Chooser", autoChooser);
   }
-<<<<<<< Updated upstream
 
   //public Command getAutonomousCommand() {
     //return autoChooser.getSelected();
   //}
-=======
-  
-  public Command getAutonomousCommand() {
-    //return autoChooser.getSelected();
-    return null;
-  }
-   
->>>>>>> Stashed changes
 
   public CommandSwerveDrivetrain getDrivetrain(){
     return drivetrain;
   }
 
-<<<<<<< Updated upstream
   //public Limelight getFLL(){
   //  return m_backLimeLight;
   //}
 
-  public Limelight getBLL(){
+  public LimeLight getBLL(){
     return m_backLimeLight;
   }
-=======
-
-  public LimeLight getBackLimelight() {
-    return m_backLimeLight;
-  }  
->>>>>>> Stashed changes
 }

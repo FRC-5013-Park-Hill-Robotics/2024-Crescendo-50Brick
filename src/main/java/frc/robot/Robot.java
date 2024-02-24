@@ -11,11 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-<<<<<<< Updated upstream
-import frc.robot.subsystems.Limelight;
-=======
 import frc.robot.subsystems.LimeLight;
->>>>>>> Stashed changes
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -27,7 +23,7 @@ public class Robot extends TimedRobot {
     Optional<Alliance> alliance =  DriverStation.getAlliance();
     if(DriverStation.isDSAttached() && alliance.isPresent()  && alliance != m_alliance){
       //Limelight frontLL = m_robotContainer.getFLL();
-      Limelight backLL = m_robotContainer.getBLL();
+      LimeLight backLL = m_robotContainer.getBLL();
       //frontLL.setAlliance(alliance);
       backLL.setAlliance(alliance.get());
     }
@@ -55,12 +51,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     checkUpdateAlliance();
-<<<<<<< Updated upstream
     //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-=======
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
->>>>>>> Stashed changes
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
@@ -103,14 +94,4 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {}
-
-  private void checkUpdateAlliance() {
-    Optional<Alliance> alliance = DriverStation.getAlliance();
-    if (DriverStation.isDSAttached() && alliance.isPresent()) {
-      LimeLight backLL = m_robotContainer.getBackLimelight();
-      backLL.setAlliance(alliance.get());
-    }
-  }
-  
 }
-
