@@ -201,10 +201,9 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     }
 
     public void zeroGyroscope(){
-        Optional<Alliance> alliance =  DriverStation.getAlliance();
-        Alliance actualAlliance = alliance.get();
+        Alliance alliance = DriverStation.getAlliance().get();
 
-        if (actualAlliance == Alliance.Red) {
+        if (alliance == Alliance.Red) {
             m_pigeon2.setYaw(180);
         }
         
