@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.Utils;
@@ -12,6 +13,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -45,11 +47,6 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
     private Field2d m_field = new Field2d();
-<<<<<<< Updated upstream
-
-    public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency, SwerveModuleConstants... modules) {
-        super(driveTrainConstants, OdometryUpdateFrequency, modules);
-=======
 
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
@@ -64,7 +61,6 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency, SwerveModuleConstants... modules) {
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
         //configurePathPlanner();
->>>>>>> Stashed changes
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -73,15 +69,11 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
-<<<<<<< Updated upstream
-=======
         //configurePathPlanner();
->>>>>>> Stashed changes
         if (Utils.isSimulation()) {
             startSimThread();
         }
 
-<<<<<<< Updated upstream
         for (int modIndex = 0; modIndex < 4; modIndex++){
             SwerveModule module = getModule(modIndex);
             CurrentLimitsConfigs configs = new CurrentLimitsConfigs();
@@ -91,7 +83,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             configs.withSupplyCurrentLimitEnable(true);
             module.getDriveMotor().getConfigurator().apply(configs);
         }
-=======
+    }
+
     @Override
     public void periodic() {
         m_field.setRobotPose(m_odometry.getEstimatedPosition());
@@ -113,7 +106,6 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
     public void configurePathPlanner() {
         double driveBaseRadius = DrivetrainConstants.rotationDiameter/2;
->>>>>>> Stashed changes
 
     }
 
@@ -164,12 +156,6 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
     private SwerveVoltageRequest steerVoltageRequest = new SwerveVoltageRequest(false);
 
-    @Override
-    public void periodic() {
-        m_field.setRobotPose(m_odometry.getEstimatedPosition());
-        SmartDashboard.putData("Field",m_field);
-    }
-
     private SysIdRoutine m_steerSysIdRoutine =
     new SysIdRoutine(
         new SysIdRoutine.Config(null, null, null, ModifiedSignalLogger.logState()),
@@ -210,10 +196,22 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     }
 
     public Pose2d getPose(){
-        return m_odometry.getEstimatedPosition();
+        //return m_odometry.getEstimatedPosition();
+        return this.getState().Pose;
     }
 
     public void zeroGyroscope(){
-        m_pigeon2.setYaw(0);
+        Optional<Alliance> alliance =  DriverStation.getAlliance();
+        Alliance actualAlliance = alliance.get();
+
+        if (actualAlliance == Alliance.Red) {
+            m_pigeon2.setYaw(180);
+        }
+        
+        else {
+            m_pigeon2.setYaw(0);
+        }
+
+        
     }
 }
