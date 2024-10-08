@@ -29,7 +29,6 @@ import frc.robot.trobot5013lib.AprilTagHelpers;
 public class GamepadDrive extends Command {
 	private CommandSwerveDrivetrain m_drivetrain;
 	private CommandXboxController m_gamepad;
-	private LimeLight m_limelight;
 	private SlewRateLimiter xLimiter = new SlewRateLimiter(2.5);
 	private SlewRateLimiter yLimiter = new SlewRateLimiter(2.5);
 	private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3);
@@ -50,12 +49,11 @@ public class GamepadDrive extends Command {
 	 * Constructor method for the GamepadDrive class
 	 * - Creates a new GamepadDrive object.
 	 */
-	public GamepadDrive(CommandSwerveDrivetrain drivetrain, CommandXboxController gamepad, LimeLight limelight) {
+	public GamepadDrive(CommandSwerveDrivetrain drivetrain, CommandXboxController gamepad) {
 		super();
 		addRequirements(drivetrain);
 		m_gamepad = gamepad;
 		m_drivetrain = drivetrain;
-		m_limelight = limelight;
 	}
 
 	@Override
@@ -70,7 +68,6 @@ public class GamepadDrive extends Command {
 		double translationX = modifyAxis(-m_gamepad.getLeftY());
 		double translationY = modifyAxis(-m_gamepad.getLeftX());
 		if (!(translationX == 0.0 && translationY == 0.0)) {
-			
 			double angle = calculateTranslationDirection(translationX, translationY);
 			translationX = Math.cos(angle) * throttle;
 			translationY = Math.sin(angle) * throttle;
@@ -96,9 +93,11 @@ public class GamepadDrive extends Command {
 			thetaOutput = -CommandSwerveDrivetrain.percentOutputToRadiansPerSecond(rotationLimiter.calculate(m_gamepad.getRightX()/2));
 		}*/
 		
+		//Applied %50 reduction to rotation, %50 reduction to x/y speed
 		thetaOutput = -CommandSwerveDrivetrain.percentOutputToRadiansPerSecond(rotationLimiter.calculate(m_gamepad.getRightX()/2));
+		translationX = translationX/2;
+		translationY = translationY/2;
 
-		//Applied %50 reduction to rotation
 		m_drivetrain.setControl(drive
 			.withVelocityX(-CommandSwerveDrivetrain.percentOutputToMetersPerSecond(xLimiter.calculate(translationX)))
 			.withVelocityY(CommandSwerveDrivetrain.percentOutputToMetersPerSecond(yLimiter.calculate(translationY))) 

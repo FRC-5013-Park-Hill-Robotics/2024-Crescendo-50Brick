@@ -25,9 +25,9 @@ public class Robot extends TimedRobot {
     Optional<Alliance> alliance =  DriverStation.getAlliance();
     if(DriverStation.isDSAttached() && alliance.isPresent()  && alliance != m_alliance){
       //Limelight frontLL = m_robotContainer.getFLL();
-      LimeLight backLL = m_robotContainer.getBLL();
+      //LimeLight backLL = m_robotContainer.getBLL();
       //frontLL.setAlliance(alliance);
-      backLL.setAlliance(alliance.get());
+      //backLL.setAlliance(alliance.get());
     }
 
     m_robotContainer.getDrivetrain().zeroGyroscope(); 
