@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
@@ -35,6 +37,8 @@ public class LimeLight extends SubsystemBase {
   private int distanceError = 0;
   private Pose2d botpose;
   private String name;
+  private Boolean doRejectUpdate;
+
   public LimeLight(String name, boolean aprilTagViable) {
     /**
      * tx - Horizontal Offset
@@ -43,61 +47,33 @@ public class LimeLight extends SubsystemBase {
      * tv - Target Visible
      */
     this.name = name;
-    this.table = NetworkTableInstance.getDefault().getTable(name);
-
     this.aprilTagViable = aprilTagViable;
 
-    this.tx = table.getEntry("tx");
-    this.ty = table.getEntry("ty");
-    this.ta = table.getEntry("ta");
-    this.tv = table.getEntry("tv");
+    this.table = NetworkTableInstance.getDefault().getTable(name);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    doRejectUpdate = false;
 
-     //read values periodically
-    double x = this.tx.getDouble(0.0);
-    double y = this.ty.getDouble(0.0);
-    double area = this.ta.getDouble(0.0);
+    CommandSwerveDrivetrain drivebase = RobotContainer.getInstance().getDrivetrain();
 
-
-    //post to smart dashboard periodically
-    SmartDashboard.putNumber("LimelightX", x);
-    SmartDashboard.putNumber("LimelightY", y);
-    SmartDashboard.putNumber("LimelightArea", area);
-
-
-    if (aprilTagViable && table.getEntry("pipeline").getValue().getDouble() == LimeLightConstants.APRIL_TAG_TARGETING) {
-
-      CommandSwerveDrivetrain drivebase = RobotContainer.getInstance().getDrivetrain();
-      LimelightHelpers.Results result =
-            LimelightHelpers.getLatestResults(name).targetingResults;
-        if (!(result.botpose[0] == 0 && result.botpose[1] == 0)) {
-          botpose = LimelightHelpers.toPose2D(result.botpose_wpiblue);
-          if (botpose != null){
-          if (field.isPoseWithinArea(botpose)) {
-            if (drivebase.getPose().getTranslation().getDistance(botpose.getTranslation()) < 0.33
-                || trust || result.targets_Fiducials.length > 1) {
-              
-              drivebase.addVisionMeasurement(
-                  botpose,
-                  Timer.getFPGATimestamp()
-                      - (result.latency_capture / 1000.0)
-                      - (result.latency_pipeline / 1000.0),
-                  true,
-                  1.0);
-              
-            } else {
-              distanceError++;
-              SmartDashboard.putNumber("Limelight Error", distanceError);
-            }
-          } else {
-            fieldError++;
-            SmartDashboard.putNumber("Field Error", fieldError);
-          }
-        }
+    LimelightHelpers.SetRobotOrientation(name, drivebase.getRotation3d().getAngle(), 0, 0, 0, 0, 0);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+    if(mt2 != null){
+      //if(Math.abs(drivebase.getPigeon2().) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates     //{
+      //  doRejectUpdate = true;
+      //}
+      if(mt2.tagCount == 0)
+      {
+        doRejectUpdate = true;
+      }
+      if(!doRejectUpdate)
+      {
+        drivebase.addVisionMeasurement(
+            mt2.pose,
+            mt2.timestampSeconds);
       }
     }
   }
