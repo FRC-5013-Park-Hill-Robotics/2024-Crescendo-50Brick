@@ -50,12 +50,11 @@ public class GamepadDrive extends Command {
 	 * Constructor method for the GamepadDrive class
 	 * - Creates a new GamepadDrive object.
 	 */
-	public GamepadDrive(CommandSwerveDrivetrain drivetrain, CommandXboxController gamepad, LimeLight limelight) {
+	public GamepadDrive(CommandSwerveDrivetrain drivetrain, CommandXboxController gamepad) {
 		super();
 		addRequirements(drivetrain);
 		m_gamepad = gamepad;
 		m_drivetrain = drivetrain;
-		m_limelight = limelight;
 	}
 
 	@Override
@@ -96,15 +95,14 @@ public class GamepadDrive extends Command {
 			thetaOutput = -CommandSwerveDrivetrain.percentOutputToRadiansPerSecond(rotationLimiter.calculate(m_gamepad.getRightX()/2));
 		}*/
 		
-		thetaOutput = -CommandSwerveDrivetrain.percentOutputToRadiansPerSecond(rotationLimiter.calculate(m_gamepad.getRightX()/2));
+		thetaOutput = -CommandSwerveDrivetrain.percentOutputToRadiansPerSecond(rotationLimiter.calculate(m_gamepad.getRightX()));
 
 		//Applied %50 reduction to rotation
 		m_drivetrain.setControl(drive
 			.withVelocityX(-CommandSwerveDrivetrain.percentOutputToMetersPerSecond(xLimiter.calculate(translationX)))
 			.withVelocityY(CommandSwerveDrivetrain.percentOutputToMetersPerSecond(yLimiter.calculate(translationY))) 
 			.withRotationalRate(thetaOutput));
-		
-
+	
 		SmartDashboard.putNumber("Throttle", throttle);
 		SmartDashboard.putNumber("Drive Rotation",-CommandSwerveDrivetrain.percentOutputToRadiansPerSecond(m_gamepad.getRightX()) );
 		SmartDashboard.putNumber("VX", CommandSwerveDrivetrain.percentOutputToMetersPerSecond(xLimiter.calculate(translationX)));

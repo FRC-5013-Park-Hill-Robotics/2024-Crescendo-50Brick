@@ -2,12 +2,12 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.trobot5013lib;
+/*package frc.robot.trobot5013lib;
 
 import com.reduxrobotics.sensors.canandcoder.Canandcoder;
-import com.reduxrobotics.sensors.canandcoder.Canandcoder.Settings;
+import com.reduxrobotics.sensors.canandcoder.Canandcoder.Settings;*/
 
-/** Add your docs here. */
+/** Add your docs here. *//*
 public class HeliumEncoderWrapper {
     private Canandcoder encoder; 
     private boolean inverted = false;
@@ -49,4 +49,4 @@ public class HeliumEncoderWrapper {
     public void setCanandcoder(Canandcoder encoder) {
         this.encoder = encoder;
     }
-}
+}*/
